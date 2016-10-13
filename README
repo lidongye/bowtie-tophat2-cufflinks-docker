@@ -1,0 +1,21 @@
+镜像包含 bowtie2  tophat2  cufflinks 软件组合,可用于初步可用于初步mRNA分析
+首先确认机器可以运行docker
+克隆项目
+git clone https://github.com/lidongye/bowtie-tophat2-cufflinks-docker.git
+进入项目目录
+cd bowtie-tophat2-cufflinks-docker/
+建议中国地区开发者使用命令
+sh run.sh china
+其他地区使用命令
+sh run.sh
+进行镜像生成
+
+镜像测试
+docker run -v $YOURPATH/bowtie-tophat2-cufflinks-docker/test/:/workdir --privileged -w="/workdir" tophat:v1.0 bowtie2-build gene.fa gene
+执行完毕将在$YOURPATH/bowtie-tophat2-cufflinks-docker/test/中生成相应索引文件
+
+PS
+使用docker镜像可以快速实现软件环境部署，不需要再为环境问题花费很多精力
+计划发布一系列生信软件镜像，此镜像是第一个发布版本，可能存在一些问题，欢迎大家提出宝贵建议
+
+dongye 2016/10/13

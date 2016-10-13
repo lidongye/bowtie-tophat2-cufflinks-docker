@@ -1,0 +1,40 @@
+############################################################
+# Dockerfile to build Tophat2 container images
+# Based on centos:7
+############################################################
+
+# Set the base image to alpine
+FROM centos:7
+
+# File Author / Maintainer
+MAINTAINER Dongye Li <dongye_bio@qq.com>,<dongye@gooalgene.com>
+
+RUN yum install -y wget \
+	&& mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup \
+	&& wget http://mirrors.163.com/.help/CentOS7-Base-163.repo -O /etc/yum.repos.d/CentOS-Base.repo \
+	&& yum clean all \
+	&& yum makecache
+
+COPY src/bowtie2-2.2.9-linux-x86_64.zip .
+COPY src/tophat-2.1.1.Linux_x86_64.tar.gz .
+COPY src/cufflinks-2.2.1.Linux_x86_64.tar.gz .
+
+# runtime dependencies
+RUN set -ex \
+	&& yum install -y \
+		unzip \
+		tar \
+		perl \
+	\
+	&& mkdir -p /usr/src/bowtie2 \
+	&& mkdir -p /usr/src/tophat \
+	&& mkdir -p /usr/src/cufflinks \
+	&& unzip bowtie2-2.2.9-linux-x86_64.zip \
+	&& mv bowtie2-2.2.9/* /usr/src/bowtie2 \
+	&& tar -zxC /usr/src/tophat --strip-components=1 -f tophat-2.1.1.Linux_x86_64.tar.gz \
+	&& tar -zxC /usr/src/cufflinks --strip-components=1 -f cufflinks-2.2.1.Linux_x86_64.tar.gz \
+	&& rm -rf bowtie2-2.2.9 bowtie2-2.2.9-linux-x86_64.zip tophat-2.1.1.Linux_x86_64.tar.gz cufflinks-2.2.1.Linux_x86_64.tar.gz \
+	&& echo "export PATH=/usr/src/tophat:/usr/src/bowtie2:/usr/src/cufflinks:$PATH" >> /etc/profile \
+	&& yum clean all
+
+ENV PATH /usr/src/tophat:/usr/src/bowtie2:/usr/src/cufflinks:$PATH
